@@ -1,26 +1,97 @@
 {%- for block in section.blocks -%}
   {%- case block.type -%}
     {%- when 'announcement' -%}
-      <div class="announcement-bar color-{{ block.settings.color_scheme }} gradient" role="region" aria-label="{{ 'sections.header.announcement' | t }}" {{ block.shopify_attributes }}>
-        {%- if block.settings.text != blank -%}
-          {%- if block.settings.link != blank -%}
-            <a href="{{ block.settings.link }}" class="announcement-bar__link link link--text focus-inset animate-arrow">
-          {%- endif -%}
-              <div class="page-width">
-                <p class="announcement-bar__message {{ block.settings.text_alignment }} h5">
-                  <span>{{ block.settings.text | escape }}</span>
-                  {%- if block.settings.link != blank -%}
-                    {% render 'icon-arrow' %}
-                  {%- endif -%}
-                </p>
-              </div>
-          {%- if block.settings.link != blank -%}
-            </a>
-          {%- endif -%}
-        {%- endif -%}
-      </div>
+      {%- render 'announcement-bar-content', blockType:'announcement' textField:block.settings.text linkField:block.settings.link alignment:block.settings.text_alignment shopify:block.shopify_attributes.id attributes:block.id colorScheme:block.settings.color_scheme -%}
+
+    {%- when 'countdown' -%}
+      {%- render 'announcement-bar-content', blockType:'countdown' textField:block.settings.text linkField:block.settings.link_1 alignment:block.settings.text_alignment_1 shopify:block.shopify_attributes.id attributes:block.id colorScheme:block.settings.color_scheme_1 counter:block.settings.counter_1 disableLink:block.settings.disable_link countdown_complete_message:block.settings.countdown_complete_message heading_size:block.settings.heading_size days_indicator:block.settings.days_indicator hours_indicator:block.settings.hours_indicator minutes_indicator:block.settings.minutes_indicator seconds_indicator:block.settings.seconds_indicator -%}
   {%- endcase -%}
 {%- endfor -%}
+
+<style>
+@media only screen and (max-width: 749px){
+  .announcement-bar__message.h1.countdown { 
+    font-size: 20px !important;
+    line-height: 24px;
+  }
+  .announcement-bar__message.h3.countdown {
+    font-size: 16px !important
+    line-height: 19px;
+  }
+
+  .announcement-bar__message.h5.countdown { 
+    font-size: 13px !important;
+    line-height: 15px;
+  }
+}
+</style>
+
+<script>
+(function countDownTimer() {
+  var blockId;
+  var myfunc;
+  var timer=[];
+  var foobar=0;
+
+  function timerMessage(countDownNode, blockId, message, error) {
+    if (error) {
+      countDownNode.querySelector("#countdown-days").parentElement.innerHTML = `<${countDownNode.dataset.heading_size} class="announcement-bar__message ${countDownNode.dataset.heading_size} countdown" style="color:#ff0000;background-color:#ffffff;"> ${message}</${countDownNode.dataset.heading_size}>`;
+    } else {
+      countDownNode.querySelector("#countdown-days").parentElement.innerHTML = ` ${message}`;
+      var disable_link = document.querySelector(`[data-block-identifier*="${blockId}"] [data-disablelink]`);
+      if (disable_link && disable_link.dataset.disablelink == "true") {
+        disable_link.href="#";
+      }
+    }
+  }
+
+  function startTimer(countDownNode, blockId, countDownDate, blockCounter) {
+    var daysNode = countDownNode.querySelector("#countdown-days");
+    var hoursNode = countDownNode.querySelector("#countdown-hours");
+    var minutesNode = countDownNode.querySelector("#countdown-minutes");
+    var secondsNode = countDownNode.querySelector("#countdown-seconds");
+
+    timer[blockCounter] = setInterval(function () {
+      var now = new Date().getTime();
+      var timeleft = countDownDate - now;
+
+      daysNode.innerHTML = `${Math.floor(timeleft / (1000 * 60 * 60 * 24))}${countDownNode.dataset.days_indicator}` ;
+      hoursNode.innerHTML = `${Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}${countDownNode.dataset.hours_indicator}` ;
+      minutesNode.innerHTML = `${Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60))}${countDownNode.dataset.minutes_indicator}` ;
+      secondsNode.innerHTML = `${Math.floor((timeleft % (1000 * 60)) / 1000)}${countDownNode.dataset.seconds_indicator}` ;
+
+      if (timeleft < 0) {
+        clearInterval(timer[blockCounter]);
+        timerMessage(countDownNode, blockId, countDownNode.dataset.countdowncompletemessage);
+      }
+      
+    }, 1000);
+  }
+
+  var countDownDiv = document.querySelectorAll("div ~ [data-block-identifier*='countdown']");
+  for (var countDownBlock = 0; countDownBlock < countDownDiv.length; countDownBlock++) {
+    blockId = countDownDiv[countDownBlock].dataset.blockIdentifier.split(",")[0].trim();
+    var countDownNode = countDownDiv[countDownBlock].querySelector(`[data-block-identifier*="${blockId}"]`);
+
+    if (countDownNode.nodeName === "P") {
+      countDown=countDownNode.dataset.countdown;
+    } else {
+      // countDownNode.nodeName === "A"
+      countDownNode=countDownDiv[countDownBlock].querySelector("p");
+      countDown=countDownNode.dataset.countdown;
+    }
+
+    var countDownDate = new Date(countDown).getTime();
+
+    if (isNaN(countDownDate) && countDown.trim() !== "") {
+      timerMessage(countDownNode, blockId, "Invalid date/time format", "error");
+    } else if (countDown.trim() !== "") {
+      startTimer(countDownNode, blockId, countDownDate, countDownBlock);
+    }
+  }
+})();
+
+</script>
 
 {% schema %}
 {
@@ -90,6 +161,142 @@
           "type": "url",
           "id": "link",
           "label": "t:sections.announcement-bar.blocks.announcement.settings.link.label"
+        }
+      ]
+    },
+    {
+      "type": "countdown",
+      "name": "Count Down Timer",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:sections.announcement-bar.blocks.announcement.settings.text.label"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            {
+              "value": "h5",
+              "label": "t:sections.all.heading_size.options__1.label"
+            },
+            {
+              "value": "h3",
+              "label": "t:sections.all.heading_size.options__2.label"
+            },
+            {
+              "value": "h1",
+              "label": "t:sections.all.heading_size.options__3.label"
+            }
+          ],
+          "default": "h5",
+          "label": "t:sections.all.heading_size.label"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment_1",
+          "options": [
+            {
+              "value": "left",
+              "label": "t:sections.announcement-bar.blocks.announcement.settings.text_alignment.options__1.label"
+            },
+            {
+              "value": "center",
+              "label": "t:sections.announcement-bar.blocks.announcement.settings.text_alignment.options__2.label"
+            },
+            {
+              "value": "right",
+              "label": "t:sections.announcement-bar.blocks.announcement.settings.text_alignment.options__3.label"
+            }
+          ],
+          "default": "center",
+          "label": "t:sections.announcement-bar.blocks.announcement.settings.text_alignment.label"
+        },
+        {
+          "type": "select",
+          "id": "color_scheme_1",
+          "options": [
+            {
+              "value": "accent-1",
+              "label": "t:sections.all.colors.accent_1.label"
+            },
+            {
+              "value": "accent-2",
+              "label": "t:sections.all.colors.accent_2.label"
+            },
+            {
+              "value": "background-1",
+              "label": "t:sections.all.colors.background_1.label"
+            },
+            {
+              "value": "background-2",
+              "label": "t:sections.all.colors.background_2.label"
+            },
+            {
+              "value": "inverse",
+              "label": "t:sections.all.colors.inverse.label"
+            }
+          ],
+          "default": "accent-1",
+          "label": "t:sections.all.colors.label"
+        },
+        {
+          "type": "text",
+          "id": "counter_1",
+          "label": "Count Down Date"
+        },
+        {
+          "type": "paragraph",
+          "content": "Count Down accepted format:"
+        },
+        {
+          "type": "paragraph",
+          "content": "Mar 23, 2023 23:59:00 EST"
+        },
+        {
+          "type": "paragraph",
+          "content": "OR Mar 23, 23:59:00 GMT-0700"
+        },
+        {
+          "type": "text",
+          "id": "days_indicator",
+          "label": "Count down display indicator for days",
+          "default": "d"
+        },
+        {
+          "type": "text",
+          "id": "hours_indicator",
+          "label": "Count down display indicator for hours",
+          "default": "h"
+        },
+        {
+          "type": "text",
+          "id": "minutes_indicator",
+          "label": "Count down display indicator for minutes",
+          "default": "m"
+        },
+        {
+          "type": "text",
+          "id": "seconds_indicator",
+          "label": "Count down display indicator for seconds",
+          "default": "s"
+        },
+        {
+          "type": "text",
+          "id": "countdown_complete_message",
+          "label": "Count Down Complete Message",
+          "default": "The deal has ended"
+        },
+        {
+          "type": "url",
+          "id": "link_1",
+          "label": "t:sections.announcement-bar.blocks.announcement.settings.link.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "disable_link",
+          "label": "Once count down completes disable link"
         }
       ]
     }
