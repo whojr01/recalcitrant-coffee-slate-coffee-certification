@@ -194,18 +194,21 @@
 
         srcElem.src = srcData[0];
         srcElem.type = `video/${srcData[1]}`;
+        srcElem.duration ='';
         video.appendChild(srcElem);
       }
       video.load();
     }
 
     function setVideoSource() {
+      if (video) {
         if (window.innerWidth > 749) {
           processVideoData(video,video.dataset.desktopData);
         } else {
           processVideoData(video,video.dataset.mobileData);
         }
       }
+    }
 
     var notYet;
     window.addEventListener("DOMContentLoaded", (e) => {
