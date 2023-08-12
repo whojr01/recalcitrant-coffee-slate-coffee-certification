@@ -1,14 +1,9 @@
-{%- for block in section.blocks -%}
-  {%- case block.type -%}
-    {%- when 'announcement' -%}
-      {%- render 'announcement-bar-content', blockType:'announcement' textField:block.settings.text linkField:block.settings.link alignment:block.settings.text_alignment shopify:block.shopify_attributes.id attributes:block.id colorScheme:block.settings.color_scheme -%}
-
-    {%- when 'countdown' -%}
-      {%- render 'announcement-bar-content', blockType:'countdown' textField:block.settings.text linkField:block.settings.link_1 alignment:block.settings.text_alignment_1 shopify:block.shopify_attributes.id attributes:block.id colorScheme:block.settings.color_scheme_1 counter:block.settings.counter_1 disableLink:block.settings.disable_link countdown_complete_message:block.settings.countdown_complete_message heading_size:block.settings.heading_size days_indicator:block.settings.days_indicator hours_indicator:block.settings.hours_indicator minutes_indicator:block.settings.minutes_indicator seconds_indicator:block.settings.seconds_indicator -%}
-  {%- endcase -%}
-{%- endfor -%}
-
 <style>
+
+.announcement-bar {
+  border-bottom: none;
+}
+
 @media only screen and (max-width: 749px){
   .announcement-bar__message.h1.countdown { 
     font-size: 20px !important;
@@ -26,70 +21,139 @@
 }
 </style>
 
+<div class="announcement-bar gradient" role="region" aria-label="{{ 'sections.header.announcement' | t }}">
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when 'announcement' -%}
+        {%- render 'announcement-bar-content',
+          blockType:'announcement',
+          textField:block.settings.text,
+          linkField:block.settings.link,
+          alignment:block.settings.text_alignment,
+          shopify:block.shopify_attributes,
+          colorScheme:block.settings.color_scheme,
+          attributes:block.id
+        -%}
+
+      {%- when 'countdown' -%}
+      <count-down-timer>
+        {%- render 'announcement-bar-content',
+          blockType:'countdown',
+          textField:block.settings.text,
+          linkField:block.settings.link_1,
+          alignment:block.settings.text_alignment_1,
+          shopify:block.shopify_attributes,
+          attributes:block.id,
+          colorScheme:block.settings.color_scheme_1,
+          counter:block.settings.counter_1,
+          disableLink:block.settings.disable_link,
+          countdown_complete_message:block.settings.countdown_complete_message,
+          heading_size:block.settings.heading_size,
+          days_indicator:block.settings.days_indicator,
+          hours_indicator:block.settings.hours_indicator,
+          minutes_indicator:block.settings.minutes_indicator,
+          seconds_indicator:block.settings.seconds_indicator
+        -%}
+        </count-down-timer>
+    {%- endcase -%}
+  {%- endfor -%}
+</div>
+
 <script>
-(function countDownTimer() {
-  var blockId;
-  var myfunc;
-  var timer=[];
-  var foobar=0;
+document.addEventListener('DOMContentLoaded', () => {
 
-  function timerMessage(countDownNode, blockId, message, error) {
-    if (error) {
-      countDownNode.querySelector("#countdown-days").parentElement.innerHTML = `<${countDownNode.dataset.heading_size} class="announcement-bar__message ${countDownNode.dataset.heading_size} countdown" style="color:#ff0000;background-color:#ffffff;"> ${message}</${countDownNode.dataset.heading_size}>`;
-    } else {
-      countDownNode.querySelector("#countdown-days").parentElement.innerHTML = ` ${message}`;
-      var disable_link = document.querySelector(`[data-block-identifier*="${blockId}"] [data-disablelink]`);
-      if (disable_link && disable_link.dataset.disablelink == "true") {
-        disable_link.href="#";
+  class CountDownTimer extends HTMLElement {
+    timer;
+
+    constructor() {
+      super();
+
+      this.timer = Array();
+      this.blockCounter = 0;
+      this.countDownTimer();
+    }
+
+    countDownTimer() {
+      var blockId;
+      var countDown;
+
+      // Find all the count down nodes
+      var countDownDiv = document.querySelectorAll("[data-block-identifier*='countdown']");
+      for (var countDownBlock = 0; countDownBlock < countDownDiv.length; countDownBlock++) {
+        blockId = countDownDiv[countDownBlock].dataset.blockIdentifier.split(",")[0].trim();
+
+        if (countDownDiv[countDownBlock].nodeName === "P") {
+          countDown=countDownDiv[countDownBlock].dataset.countdown;
+        } else {
+          // countDownNode.nodeName === "A"
+          countDown=countDownDiv[countDownBlock].dataset.countdown;
+        }
+
+      // Calcualte the date and error check format
+        var countDownDate = new Date(countDown).getTime();
+
+        if (countDown.match(/^[a-zA-Z]{3} [\d]{1,2}, [0-9]{4} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2} [a-zA-Z]{3}/) === null) {
+          this.timerMessage(countDownDiv[countDownBlock], blockId, "Invalid date/time format", "error");
+          continue
+        } else {
+          if (countDownDate - new Date().getTime()  < 0) {
+            // Timer has completed. Move along
+            this.timerMessage(countDownDiv[countDownBlock], blockId, countDownDiv[countDownBlock].dataset.countdowncompletemessage);
+            continue;
+          }
+        }
+
+        if (isNaN(countDownDate) && countDown.trim() !== "") {
+          this.timerMessage(countDownDiv[countDownBlock], blockId, "Invalid format date/time", "error");
+        } else if (countDown.trim() !== "") {
+          this.startTimer(countDownDiv[countDownBlock], blockId, countDownDate, countDownBlock);
+          this.blockCounter++;
+        }
       }
     }
-  }
 
-  function startTimer(countDownNode, blockId, countDownDate, blockCounter) {
-    var daysNode = countDownNode.querySelector("#countdown-days");
-    var hoursNode = countDownNode.querySelector("#countdown-hours");
-    var minutesNode = countDownNode.querySelector("#countdown-minutes");
-    var secondsNode = countDownNode.querySelector("#countdown-seconds");
-
-    timer[blockCounter] = setInterval(function () {
-      var now = new Date().getTime();
-      var timeleft = countDownDate - now;
-
-      daysNode.innerHTML = `${Math.floor(timeleft / (1000 * 60 * 60 * 24))}${countDownNode.dataset.days_indicator}` ;
-      hoursNode.innerHTML = `${Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}${countDownNode.dataset.hours_indicator}` ;
-      minutesNode.innerHTML = `${Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60))}${countDownNode.dataset.minutes_indicator}` ;
-      secondsNode.innerHTML = `${Math.floor((timeleft % (1000 * 60)) / 1000)}${countDownNode.dataset.seconds_indicator}` ;
-
-      if (timeleft < 0) {
-        clearInterval(timer[blockCounter]);
-        timerMessage(countDownNode, blockId, countDownNode.dataset.countdowncompletemessage);
+    timerMessage(countDownNode, blockId, message, error) {
+      if (error) {
+        countDownNode.innerHTML = `<${countDownNode.dataset.heading_size} class="announcement-bar__message ${countDownNode.dataset.heading_size} countdown" style="color:#ff0000;background-color:#ffffff;"> ${message}</${countDownNode.dataset.heading_size}>`;
+      } else {
+        countDownNode.innerHTML = ` ${message}`;
+        console.log(countDownNode.dataset.disablelink,"<- countDownNode.dataset.disablelink")
+        if (countDownNode.dataset.disablelink == "true") {
+          console.log("Removing link")
+          countDownNode.href="#";
+        }
       }
-      
-    }, 1000);
-  }
-
-  var countDownDiv = document.querySelectorAll("div ~ [data-block-identifier*='countdown']");
-  for (var countDownBlock = 0; countDownBlock < countDownDiv.length; countDownBlock++) {
-    blockId = countDownDiv[countDownBlock].dataset.blockIdentifier.split(",")[0].trim();
-    var countDownNode = countDownDiv[countDownBlock].querySelector(`[data-block-identifier*="${blockId}"]`);
-
-    if (countDownNode.nodeName === "P") {
-      countDown=countDownNode.dataset.countdown;
-    } else {
-      // countDownNode.nodeName === "A"
-      countDownNode=countDownDiv[countDownBlock].querySelector("p");
-      countDown=countDownNode.dataset.countdown;
     }
 
-    var countDownDate = new Date(countDown).getTime();
+    startTimer(countDownNode, blockId, countDownDate, blockCounter) {
+      var daysNode = countDownNode.querySelector("#countdown-days");
+      var hoursNode = countDownNode.querySelector("#countdown-hours");
+      var minutesNode = countDownNode.querySelector("#countdown-minutes");
+      var secondsNode = countDownNode.querySelector("#countdown-seconds");
+      var timeleft;
+      var intervalTimer;
 
-    if (isNaN(countDownDate) && countDown.trim() !== "") {
-      timerMessage(countDownNode, blockId, "Invalid date/time format", "error");
-    } else if (countDown.trim() !== "") {
-      startTimer(countDownNode, blockId, countDownDate, countDownBlock);
+      console.log(blockCounter,"<- blockCounter startTimer()")
+
+        this.timer[blockCounter] = setInterval(() => {
+        var now = new Date().getTime();
+        timeleft = countDownDate - now;
+
+        daysNode.innerHTML = `${Math.floor(timeleft / (1000 * 60 * 60 * 24))}${countDownNode.dataset.days_indicator}` ;
+        hoursNode.innerHTML = `${Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}${countDownNode.dataset.hours_indicator}` ;
+        minutesNode.innerHTML = `${Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60))}${countDownNode.dataset.minutes_indicator}` ;
+        secondsNode.innerHTML = `${Math.floor((timeleft % (1000 * 60)) / 1000)}${countDownNode.dataset.seconds_indicator}` ;
+        
+        if (timeleft < 0) {
+          clearInterval(this.timer[blockCounter]);
+          this.timerMessage(countDownNode, blockId, countDownNode.dataset.countdowncompletemessage);
+          return
+        }
+      }, 1000);
     }
   }
-})();
+  customElements.define('count-down-timer', CountDownTimer);
+});
 
 </script>
 
@@ -242,13 +306,12 @@
           "label": "t:sections.all.colors.label"
         },
         {
-          "type": "text",
-          "id": "counter_1",
-          "label": "Count Down Date"
+          "type": "paragraph",
+          "content": "Date format"
         },
         {
           "type": "paragraph",
-          "content": "Count Down accepted format:"
+          "content": "Mo Day, Year Hours:Minutes:Seconds TZ"
         },
         {
           "type": "paragraph",
@@ -256,7 +319,12 @@
         },
         {
           "type": "paragraph",
-          "content": "OR Mar 23, 23:59:00 GMT-0700"
+          "content": "Mar 23, 23:59:00 GMT-0700"
+        },
+        {
+          "type": "text",
+          "id": "counter_1",
+          "label": "Count Down Date"
         },
         {
           "type": "text",

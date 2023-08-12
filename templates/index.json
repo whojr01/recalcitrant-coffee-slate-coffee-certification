@@ -35,19 +35,19 @@
         "template--19704553505059__b2b9146c-1d14-46ee-8952-fe7b3d487490-1688518870dee4cd12-2"
       ],
       "settings": {
-        "image_video_choice": false,
+        "image_video_choice": true,
         "video_desktop": "shopify:\/\/files\/videos\/file_example_WEBM_640_1_4MB.webm",
         "video_mobile": "shopify:\/\/files\/videos\/Mobile video.mp4",
         "image": "shopify:\/\/shop_images\/banner_image_main.jpg",
         "image_overlay_opacity": 0,
         "image_height": "medium",
         "desktop_content_position": "middle-center",
-        "show_text_box": false,
+        "show_text_box": true,
         "desktop_content_alignment": "center",
         "color_scheme": "background-1",
         "mobile_content_alignment": "center",
         "stack_images_on_mobile": false,
-        "show_text_below": false
+        "show_text_below": true
       }
     },
     "featured_collection": {

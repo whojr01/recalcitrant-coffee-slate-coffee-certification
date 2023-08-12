@@ -40,28 +40,26 @@
     {{ attributes }}, countdown
 {%- endcapture -%}
 
-
-<div class="announcement-bar color-{{ colorScheme }} gradient" role="region" aria-label="{{ 'sections.header.announcement' | t }}" {{ shopify }} {%- if blockType == 'countdown' -%} data-block-identifier="{{ blockId }}" {%- endif -%}>
 {%- if textField != blank or blockType == 'countdown' and counter != blank -%}
-    {%- if linkField != blank -%}
-    <a href="{{ linkField }}" class="announcement-bar__link link link--text focus-inset animate-arrow" {%- if blockType == 'countdown' -%} data-disablelink="{{ disableLink }}" data-block-identifier="{{ blockId }}" data-block-identifier="{{ blockId }}" {%- endif -%}>
-    {%- endif -%}
-        <div class="page-width">
-        <p class="announcement-bar__message {% if blockType == 'countdown' %} {{ heading_size }} countdown {% else %} h5 {% endif %}  {{ alignment }}" {%- if blockType == 'countdown' -%}data-countdown="{{ counter | escape }}" data-days_indicator="{{ days_indicator | escape }}" data-hours_indicator="{{ hours_indicator | escape }}" data-minutes_indicator="{{ minutes_indicator | escape }}" data-seconds_indicator="{{ seconds_indicator | escape }}" data-countdowncompletemessage="{{ countdown_complete_message | escape }}" data-block-identifier="{{ blockId }}" data-heading_size="{{ heading_size }}" {%- endif -%}>
-            <span>{{ textField | escape }} </span>
-            {%- if blockType == 'countdown' -%}
-                <span id="countdown-days">0{{ days_indicator }} </span>
-                <span id="countdown-hours">0{{ hours_indicator }} </span>
-                <span id="countdown-minutes">0{{ minutes_indicator }} </span>
-                <span id="countdown-seconds">0{{ seconds_indicator }} </span>
-            {%- endif -%}
-            {%- if linkField != blank -%}
-            {% render 'icon-arrow' %}
-            {%- endif -%}
-        </p>
-        </div>
-    {%- if linkField != blank -%}
-    </a>
-    {%- endif -%}
+    <div class="page-width color-{{ colorScheme }}">
+        {%- if linkField != blank -%}
+            <a href="{{ linkField }}" class="announcement-bar__link link link--text focus-inset animate-arrow {{ alignment }}" {{ shopify }} {%- if blockType == 'countdown' and linkField != blank -%} data-countdown="{{ counter | escape }}" data-days_indicator="{{ days_indicator | escape }}" data-hours_indicator="{{ hours_indicator | escape }}" data-minutes_indicator="{{ minutes_indicator | escape }}" data-seconds_indicator="{{ seconds_indicator | escape }}" data-countdowncompletemessage="{{ countdown_complete_message | escape }}" data-block-identifier="{{ blockId }}" data-heading_size="{{ heading_size }}" data-disablelink="{{ disableLink }}" {%- endif -%} >
+        {%- endif -%}
+            <p class="announcement-bar__message {% if blockType == 'countdown' %} {{ heading_size }} countdown {% else %} h5 {% endif %}  {{ alignment }}" {{ shopify }} {%- if blockType == 'countdown' and linkField == blank -%} data-countdown="{{ counter | escape }}" data-days_indicator="{{ days_indicator | escape }}" data-hours_indicator="{{ hours_indicator | escape }}" data-minutes_indicator="{{ minutes_indicator | escape }}" data-seconds_indicator="{{ seconds_indicator | escape }}" data-countdowncompletemessage="{{ countdown_complete_message | escape }}" data-block-identifier="{{ blockId }}" data-heading_size="{{ heading_size }}" {%- endif -%}>
+                <span>{{ textField | escape }} </span>
+                {%- if blockType == 'countdown' -%}
+                    <span id="countdown-days">0{{ days_indicator }} </span>
+                    <span id="countdown-hours">0{{ hours_indicator }} </span>
+                    <span id="countdown-minutes">0{{ minutes_indicator }} </span>
+                    <span id="countdown-seconds">0{{ seconds_indicator }} </span>
+                {%- endif -%}
+                {%- if linkField != blank -%}
+                {% render 'icon-arrow' %}
+                {%- endif -%}
+            </p>
+            </div>
+        {%- if linkField != blank -%}
+            </a>
+        {%- endif -%}
+    </div>
 {%- endif -%}
-</div>

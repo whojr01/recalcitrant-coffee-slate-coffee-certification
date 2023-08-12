@@ -5,64 +5,26 @@
     "announcement-bar": {
       "type": "announcement-bar",
       "blocks": {
-        "announcement-bar-0": {
-          "type": "announcement",
-          "settings": {
-            "text": "Coffee Time ☕",
-            "text_alignment": "center",
-            "color_scheme": "accent-2",
-            "link": "shopify:\/\/blogs\/coffee-beans"
-          }
-        },
-        "274b35be-2a67-46fb-aad5-46b7272a9779": {
+        "38ac9f44-ff0c-49f5-88f9-7c24286279ab": {
           "type": "countdown",
           "settings": {
-            "text": "Ethiopian Coffee Sale",
-            "heading_size": "h1",
-            "text_alignment_1": "left",
-            "color_scheme_1": "accent-2",
-            "counter_1": "Jul 18, 2023 15:33:00 EDT",
-            "days_indicator": "",
-            "hours_indicator": "",
-            "minutes_indicator": "",
-            "seconds_indicator": "",
-            "countdown_complete_message": "The Ethiopian deal has expired",
-            "link_1": "shopify:\/\/blogs\/coffee-beans",
-            "disable_link": false
-          }
-        },
-        "c574404c-7e95-4800-9f4b-8a7da121bddc": {
-          "type": "announcement",
-          "settings": {
-            "text": "Welcome to our store",
-            "text_alignment": "center",
-            "color_scheme": "accent-1",
-            "link": ""
-          }
-        },
-        "0c2c68f7-9f7a-4dd4-bf34-435291dd3e8c": {
-          "type": "countdown",
-          "settings": {
-            "text": "Vietnam Coffee Sale",
-            "heading_size": "h3",
-            "text_alignment_1": "right",
+            "text": "test",
+            "heading_size": "h5",
+            "text_alignment_1": "center",
             "color_scheme_1": "accent-1",
-            "counter_1": "Jul 18, 2023 15:35:00 EDT",
+            "counter_1": "Aug 10, 2023 23:55 EDT",
             "days_indicator": "d",
             "hours_indicator": "h",
             "minutes_indicator": "m",
             "seconds_indicator": "s",
-            "countdown_complete_message": "The Vietnam deal has expired",
-            "link_1": "shopify:\/\/products\/vietnam",
-            "disable_link": true
+            "countdown_complete_message": "The deal has ended",
+            "link_1": "",
+            "disable_link": false
           }
         }
       },
       "block_order": [
-        "announcement-bar-0",
-        "274b35be-2a67-46fb-aad5-46b7272a9779",
-        "c574404c-7e95-4800-9f4b-8a7da121bddc",
-        "0c2c68f7-9f7a-4dd4-bf34-435291dd3e8c"
+        "38ac9f44-ff0c-49f5-88f9-7c24286279ab"
       ],
       "custom_css": [],
       "settings": {}

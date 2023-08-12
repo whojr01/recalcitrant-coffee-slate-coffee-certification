@@ -128,6 +128,8 @@
     "show_vendor": false,
     "show_cart_note": false,
     "cart_drawer_collection": "coffee",
+    "upsell_text": "Others just like you, enjoyed this product",
+    "upsell_product": "ethiopia",
     "checkout_logo_image": "shopify:\/\/shop_images\/logo_t.png",
     "checkout_accent_color": "#80411e",
     "checkout_button_color": "#80411e",
