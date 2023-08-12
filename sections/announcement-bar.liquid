@@ -116,8 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (error) {
         countDownNode.innerHTML = `<${countDownNode.dataset.heading_size} class="announcement-bar__message ${countDownNode.dataset.heading_size} countdown" style="color:#ff0000;background-color:#ffffff;"> ${message}</${countDownNode.dataset.heading_size}>`;
       } else {
-        countDownNode.innerHTML = ` ${message}`;
-        console.log(countDownNode.dataset.disablelink,"<- countDownNode.dataset.disablelink")
+        countDownNode.innerHTML = ` ${message} `;
         if (countDownNode.dataset.disablelink == "true") {
           console.log("Removing link")
           countDownNode.href="#";
@@ -132,8 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
       var secondsNode = countDownNode.querySelector("#countdown-seconds");
       var timeleft;
       var intervalTimer;
-
-      console.log(blockCounter,"<- blockCounter startTimer()")
 
         this.timer[blockCounter] = setInterval(() => {
         var now = new Date().getTime();

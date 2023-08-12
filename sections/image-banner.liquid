@@ -41,7 +41,7 @@
 
   {%- if section.settings.image_video_choice == true -%}
     {%- if section.settings.image != blank -%}
-      <div class="banner__media media{% if section.settings.image == blank and section.settings.image_2 == blank %} placeholder{% endif %}{% if section.settings.image_2 != blank %} banner__media-half{% endif %}">
+      <div class="banner__media media{% if section.settings.image == blank and section.settings.image_2 == blank %} placeholder{% endif %}{% if section.settings.image_2 != blank %} banner__media-half{% endif %}" {{ block.shopify_attributes }}>
         {%- liquid
           assign image_height = section.settings.image.width | divided_by: section.settings.image.aspect_ratio
           if section.settings.image_2 != blank
@@ -73,7 +73,7 @@
       </div>
     {%- endif -%}
     {%- if section.settings.image_2 != blank -%}
-      <div class="banner__media media{% if section.settings.image != blank %} banner__media-half{% endif %}">
+      <div class="banner__media media{% if section.settings.image != blank %} banner__media-half{% endif %}" {{ block.shopify_attributes }}>
         {%- liquid
           assign image_height_2 = section.settings.image_2.width | divided_by: section.settings.image_2.aspect_ratio
           if section.settings.image != blank
@@ -102,7 +102,7 @@
     {%- endif -%}
 
     {%- else -%}
-      <div id="video_container" class="banner__media media">
+      <div id="video_container" class="banner__media media" {{ block.shopify_attributes }}>
         {%- capture DesktopfileData -%}
           {%- render 'video-settings', videoSources:section.settings.video_desktop.sources -%}
         {%- endcapture -%}
@@ -174,6 +174,7 @@
 </div>
 
 <script>
+window.addEventListener('DOMContentLoaded', () => {
   (function videoChange() {
     var video=document.querySelector("#videoframe");
     
@@ -219,6 +220,7 @@
       });
     })
   })();
+});
 
 </script>
 
