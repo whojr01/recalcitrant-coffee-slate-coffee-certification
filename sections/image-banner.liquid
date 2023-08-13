@@ -174,53 +174,51 @@
 </div>
 
 <script>
-window.addEventListener('DOMContentLoaded', () => {
-  (function videoChange() {
-    var video=document.querySelector("#videoframe");
-    
-    function processVideoData(myVideo, vidParams ) {
-    // Remove old source tags
-      var changeSource = myVideo.querySelectorAll("source");
-      if (changeSource.length > 0) {
-        for (var d of changeSource) {
-          d.parentNode.removeChild(d);
-        }
-      }
-
-      // Add new source tags
-      var source = document.createElement("source");
-      for (vidData of vidParams.split('START,')) {
-        var srcData = vidData.split(',');
-        var srcElem = document.createElement('source');
-
-        srcElem.src = srcData[0];
-        srcElem.type = `video/${srcData[1]}`;
-        srcElem.duration ='';
-        video.appendChild(srcElem);
-      }
-      video.load();
-    }
-
-    function setVideoSource() {
-      if (video) {
-        if (window.innerWidth > 749) {
-          processVideoData(video,video.dataset.desktopData);
-        } else {
-          processVideoData(video,video.dataset.mobileData);
-        }
+(function videoChange() {
+  var video=document.querySelector("#videoframe");
+  
+  function processVideoData(myVideo, vidParams ) {
+  // Remove old source tags
+    var changeSource = myVideo.querySelectorAll("source");
+    if (changeSource.length > 0) {
+      for (var d of changeSource) {
+        d.parentNode.removeChild(d);
       }
     }
 
-    var notYet;
-    window.addEventListener("DOMContentLoaded", (e) => {
-      setVideoSource();
-      window.addEventListener("resize",(e) => {
-        clearTimeout(notYet);
-        notYet = setTimeout(setVideoSource, 500);
-      });
-    })
-  })();
-});
+    // Add new source tags
+    var source = document.createElement("source");
+    for (vidData of vidParams.split('START,')) {
+      var srcData = vidData.split(',');
+      var srcElem = document.createElement('source');
+
+      srcElem.src = srcData[0];
+      srcElem.type = `video/${srcData[1]}`;
+      srcElem.duration ='';
+      video.appendChild(srcElem);
+    }
+    video.load();
+  }
+
+  function setVideoSource() {
+    if (video) {
+      if (window.innerWidth > 749) {
+        processVideoData(video,video.dataset.desktopData);
+      } else {
+        processVideoData(video,video.dataset.mobileData);
+      }
+    }
+  }
+
+  var notYet;
+  window.addEventListener("DOMContentLoaded", (e) => {
+    setVideoSource();
+    window.addEventListener("resize",(e) => {
+      clearTimeout(notYet);
+      notYet = setTimeout(setVideoSource, 500);
+    });
+  })
+})();
 
 </script>
 
