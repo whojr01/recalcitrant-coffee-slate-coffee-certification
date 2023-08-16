@@ -43,7 +43,6 @@ count-down-timer > .page-width {
             linkField:block.settings.link,
             alignment:block.settings.text_alignment,
             shopify:block.shopify_attributes,
-            colorScheme:block.settings.color_scheme,
             attributes:block.id
           -%}
         </div>
@@ -58,15 +57,14 @@ count-down-timer > .page-width {
               alignment:block.settings.text_alignment_1,
               shopify:block.shopify_attributes,
               attributes:block.id,
-              colorScheme:block.settings.color_scheme_1,
               counter:block.settings.counter_1,
               disableLink:block.settings.disable_link,
-              countdown_complete_message:block.settings.countdown_complete_message,
               heading_size:block.settings.heading_size,
               days_indicator:block.settings.days_indicator,
               hours_indicator:block.settings.hours_indicator,
               minutes_indicator:block.settings.minutes_indicator,
               seconds_indicator:block.settings.seconds_indicator
+              countdown_complete_message:block.settings.countdown_complete_message,
             -%}
           </count-down-timer>
         </div>
@@ -127,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     timerMessage(countDownNode, blockId, message, error) {
+      var fontSize = countDownNode.dataset.headingSize;
+      countDownNode.style.fontSize = window.getComputedStyle(document.querySelector(fontSize)).fontSize;
       if (error) {
         countDownNode.innerHTML = `<${countDownNode.dataset.heading_size} class="announcement-bar__message ${countDownNode.dataset.heading_size} countdown" style="color:#ff0000;background-color:#ffffff;"> ${message}</${countDownNode.dataset.heading_size}>`;
       } else {
