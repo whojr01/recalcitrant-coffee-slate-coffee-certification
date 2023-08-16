@@ -8,6 +8,14 @@
   border-bottom: none;
 }
 
+.announcement-bar-section > .page-width {
+  max-width: 100%;
+}
+
+count-down-timer > .page-width {
+  max-width: 100%;
+}
+
 @media only screen and (max-width: 749px){
   .announcement-bar__message.h1.countdown { 
     font-size: 20px !important;
@@ -25,43 +33,45 @@
 }
 </style>
 
-<div class="announcement-bar gradient" role="region" aria-label="{{ 'sections.header.announcement' | t }}">
   {%- for block in section.blocks -%}
     {%- case block.type -%}
       {%- when 'announcement' -%}
-        {%- render 'announcement-bar-content',
-          blockType:'announcement',
-          textField:block.settings.text,
-          linkField:block.settings.link,
-          alignment:block.settings.text_alignment,
-          shopify:block.shopify_attributes,
-          colorScheme:block.settings.color_scheme,
-          attributes:block.id
-        -%}
+        <div class="announcement-bar color-{{ block.settings.color_scheme }} gradient" role="region" aria-label="{{ 'sections.header.announcement' | t }}" {{ block.shopify_attributes }}>
+          {%- render 'announcement-bar-content',
+            blockType:'announcement',
+            textField:block.settings.text,
+            linkField:block.settings.link,
+            alignment:block.settings.text_alignment,
+            shopify:block.shopify_attributes,
+            colorScheme:block.settings.color_scheme,
+            attributes:block.id
+          -%}
+        </div>
 
       {%- when 'countdown' -%}
-      <count-down-timer>
-        {%- render 'announcement-bar-content',
-          blockType:'countdown',
-          textField:block.settings.text,
-          linkField:block.settings.link_1,
-          alignment:block.settings.text_alignment_1,
-          shopify:block.shopify_attributes,
-          attributes:block.id,
-          colorScheme:block.settings.color_scheme_1,
-          counter:block.settings.counter_1,
-          disableLink:block.settings.disable_link,
-          countdown_complete_message:block.settings.countdown_complete_message,
-          heading_size:block.settings.heading_size,
-          days_indicator:block.settings.days_indicator,
-          hours_indicator:block.settings.hours_indicator,
-          minutes_indicator:block.settings.minutes_indicator,
-          seconds_indicator:block.settings.seconds_indicator
-        -%}
-        </count-down-timer>
+        <div class="announcement-bar color-{{ block.settings.color_scheme_1 }} gradient" role="region" aria-label="{{ 'sections.header.announcement' | t }}" {{ block.shopify_attributes }}>
+          <count-down-timer>
+            {%- render 'announcement-bar-content',
+              blockType:'countdown',
+              textField:block.settings.text,
+              linkField:block.settings.link_1,
+              alignment:block.settings.text_alignment_1,
+              shopify:block.shopify_attributes,
+              attributes:block.id,
+              colorScheme:block.settings.color_scheme_1,
+              counter:block.settings.counter_1,
+              disableLink:block.settings.disable_link,
+              countdown_complete_message:block.settings.countdown_complete_message,
+              heading_size:block.settings.heading_size,
+              days_indicator:block.settings.days_indicator,
+              hours_indicator:block.settings.hours_indicator,
+              minutes_indicator:block.settings.minutes_indicator,
+              seconds_indicator:block.settings.seconds_indicator
+            -%}
+          </count-down-timer>
+        </div>
     {%- endcase -%}
   {%- endfor -%}
-</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
